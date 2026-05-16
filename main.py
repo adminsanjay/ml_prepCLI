@@ -32,8 +32,8 @@ class Preprocessor:
         "-1":"Exit"
     }
 
-    def __init__(self):
-        self.data=DataInput().get_data()
+    def __init__(self,file):
+        self.data=DataInput().get_data(file)
         console.print(Panel.fit("[bold green]Dataset Loaded Successfully 😁[/bold green]",border_style="green"))
 
     def show_columns(self):
@@ -105,8 +105,9 @@ class Preprocessor:
             self.run_task(choice)
 
 @click.command()
-def start():
-    app=Preprocessor()
+@click.argument("file")
+def start(file):
+    app=Preprocessor(file)
     app.main()
 
 if __name__=="__main__":
