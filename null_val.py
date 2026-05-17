@@ -25,10 +25,12 @@ class NullHandler:
             table.add_row(col)
         self.console.print(table)
     def printNullValues(self):
-        self.console.print("\nNULL values of each column:")
-        for col in self.data.columns.values:
-            print('{0:<20}'.format(col)+'{0:5}'.format(sum(pd.isnull(self.data[col]))))
-        print("")
+        table=Table(title="NULL Values",box=box.ROUNDED,border_style="red")
+        table.add_column("Column",style="bold cyan")
+        table.add_column("NULL Count",style="bold yellow")
+        for col in self.data.columns:
+            table.add_row(col,str(self.data[col].isnull().sum()))
+        self.console.print(table)
         return
     def removeColumn(self):
         self.showColumns()
