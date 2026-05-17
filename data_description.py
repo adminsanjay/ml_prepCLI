@@ -1,76 +1,87 @@
+from rich.console import Console
+from rich.table import Table
+from rich.prompt import Prompt
+from rich.panel import Panel
+from rich import box
 import pandas as pd
 
+console=Console()
+
 class DataDescription:
-    # The Task associated with this class.
-    tasks = [
-        '\n1. Describe a specific Column',
-        '2. Show Properties of Each Column',
-        '3. Show the Dataset'
-    ]
+    tasks={
+        "1":"Describe Specific Column",
+        "2":"Show Dataset Properties",
+        "3":"Show Dataset",
+        "-1":"Back"
+    }
 
-    def __init__(self, data):
-        self.data = data
+    def __init__(self,data):
+        self.data=data
 
-    # The function that prints the database on the command line.
-    def showDataset(self):
-        while(1):
+    def show_columns(self):
+        table=Table(title="Columns",box=box.ROUNDED,border_style="cyan")
+        table.add_column("Column Names",style="bold green")
+        for col in self.data.columns:
+            table.add_row(col)
+        console.print(table)
+
+    def show_dataset(self):
+        while True:
             try:
-                rows = int(input(("\nHow many rows(>0) to print? (Press -1 to go back)  ")))
-                if rows == -1:
-                    break
-                if rows <= 0:
-                    print("Number of rows given must be +ve...\U0001F974")
+                rows=int(Prompt.ask("[bold cyan]Number of rows to display (-1 to go back)[/bold cyan]"))
+                if rows==-1:
+                    return
+                if rows<=0:
+                    console.print("[bold red]Invalid Choice[/bold red]")
                     continue
-                print(self.data.head(rows))
+                table=Table(title="Dataset Preview",box=box.MINIMAL_DOUBLE_HEAD,border_style="magenta")
+                for col in self.data.columns:
+                    table.add_column(str(col),style="cyan")
+                for _,row in self.data.head(rows).iterrows():
+                    table.add_row(*[str(x) for x in row.values])
+                console.print(table)
+                break
             except ValueError:
-                print("Numeric value is required. Try again....\U0001F974")
+                console.print("[bold red]Integer Value Required[/bold red]")
+
+    def describe_column(self):
+        self.show_columns()
+        while True:
+            col=Prompt.ask("[bold cyan]Enter Column Name[/bold cyan]").lower()
+            if col not in self.data.columns:
+                console.print("[bold red]Column Not Found[/bold red]")
                 continue
+            console.print(Panel.fit(str(self.data[col].describe()),border_style="green"))
             break
-        return
 
-    # function to print all the columns
-    def showColumns(self):
-        for column in self.data.columns.values:
-            print(column, end="  ")
+    def dataset_properties(self):
+        console.print(Panel.fit(str(self.data.describe()),title="Dataset Description",border_style="blue"))
+        info_table=Table(title="Dataset Info",box=box.ROUNDED,border_style="yellow")
+        info_table.add_column("Column",style="bold cyan")
+        info_table.add_column("Datatype",style="bold green")
+        info_table.add_column("NULL Values",style="bold red")
+        for col in self.data.columns:
+            info_table.add_row(str(col),str(self.data[col].dtype),str(self.data[col].isnull().sum()))
+        console.print(info_table)
 
-    # function to describe the dataset or any specific column.
     def describe(self):
-        while(1):
-            print("\nTasks (Data Description)\U0001F447")
-            for task in self.tasks:
-                print(task)
+        while True:
+            table=Table(title="Data Description Tasks",box=box.DOUBLE_EDGE,border_style="blue")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold green")
+            for key,value in self.tasks.items():
+                table.add_row(key,value)
+            console.print(table)
 
-            while(1):
-                try:
-                    choice = int(input(("\n\nWhat you want to do? (Press -1 to go back)  ")))
-                except ValueError:
-                    print("Integer Value required. Try again.....\U0001F974")
-                    continue
-                break
+            choice=Prompt.ask("[bold cyan]Select Task[/bold cyan]")
 
-            if choice==-1:
-                break
-                        
-            elif choice==1:
-                self.showColumns()
-                while(1):
-                    describeColumn = input("\n\nWhich Column?  ").lower()
-                    try:
-                        # describe() function is used to tell all the info regarding any specific column.
-                        print(self.data[describeColumn].describe())
-                    except KeyError:
-                        print("No Column present with this name. Try again....\U0001F974")
-                        continue
-                    break
-            
-            elif choice==2:
-                # describe() function is used to tell all the info about the database.
-                print(self.data.describe())
-                print("\n\n")
-                print(self.data.info())
-
-            elif choice==3:
-                self.showDataset()
-
+            if choice=="1":
+                self.describe_column()
+            elif choice=="2":
+                self.dataset_properties()
+            elif choice=="3":
+                self.show_dataset()
+            elif choice=="-1":
+                return
             else:
-                print("\nWrong Integer value!! Try again..\U0001F974")
+                console.print("[bold red]Invalid Choice[/bold red]")

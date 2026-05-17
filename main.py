@@ -47,7 +47,7 @@ class Preprocessor:
     def remove_column(self):
         self.show_columns()
         while True:
-            col=Prompt.ask("[bold cyan]Enter column name to remove (-1 to skip)[/bold cyan]")
+            col=Prompt.ask("[bold cyan]Enter column name to remove (-1 for Preprocessing Menu)[/bold cyan]")
             if col=="-1":
                 return
             if col not in self.data.columns:
