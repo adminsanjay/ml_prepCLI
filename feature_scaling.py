@@ -1,162 +1,141 @@
 import pandas as pd
 from data_description import DataDescription
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
-
+from rich.console import Console
+from rich.table import Table
+from rich.prompt import Prompt ,Confirm
+from rich.panel import Panel
+from rich import box
+console=Console()
 class FeatureScaling:
+    tasks = {
+        '1':"Perform Normalization(MinMax Scaler)",
+        '2':"Perform Standardization(Standard Scaler)",
+        '3':"Show the Dataset"
+    }
     
-    bold_start = "\033[1m"
-    bold_end = "\033[0;0m"
+    tasks_normalization = {
+        '1':"Normalize a specific Column",
+        '2':"Normalize the whole Dataset",
+        '3':"Show the Dataset"
+    }
 
-    # All the Tasks associated with this class.
-    tasks = [
-        "\n1. Perform Normalization(MinMax Scaler)",
-        "2. Perform Standardization(Standard Scaler)",
-        "3. Show the Dataset"
-    ]
-    
-    tasks_normalization = [
-        "\n1. Normalize a specific Column",
-        "2. Normalize the whole Dataset",
-        "3. Show the Dataset"
-    ]
-
-    tasks_standardization = [
-        "\n1. Standardize a specific Column",
-        "2. Standardize the whole Dataset",
-        "3. Show the Dataset"
-    ]
+    tasks_standardization = {
+        '1':"Standardize a specific Column",
+        '2':"Standardize the whole Dataset",
+        '3':"Show the Dataset"
+    }
 
     def __init__(self, data):
         self.data = data
     
-    # Performs Normalization on specific column or on whole dataset.
     def normalization(self):
         while(1):
-            print("\nTasks (Normalization)\U0001F447")
-            for task in self.tasks_normalization:
-                print(task)
-
+            table=Table(title="Normalization Tasks",box=box.ROUNDED,border_style="cyan",title_style="bold cyan")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold red")
+            for key,value in self.tasks_normalization.items():
+                table.add_row(key,value)
+            console.print(table)
             while(1):
                 try:
-                    choice = int(input(("\n\nWhat you want to do? (Press -1 to go back)  ")))
+                    ch=Prompt.ask("[bold cyan]What you want to do? (Press -1 to go back)[/bold cyan]")
+                    ch = int(ch)
                 except ValueError:
-                    print("Integer Value required. Try again.....\U0001F974")
+                    console.print("[bold red]Invalid input. Please enter a valid integer😡[/bold red]")
                     continue
                 break
-    
-            if choice == -1:
-                break
-            
-            # Performs normalization on the columns provided.
-            elif choice == 1:
-                print(self.data.dtypes)
-                columns = input("Enter all the column"+ self.bold_start + "(s)" + self.bold_end + "you want to normalize (Press -1 to go back)  ").lower()
-                if columns == "-1":
-                    break
-                for column in columns.split(" "):
-                    # This is the basic approach to perform MinMax Scaler on a set of data.
+            if ch == -1:
+                return self.data
+            elif ch == 1:
+                console.print(f"[bold yellow]{self.data.dtypes}[/bold yellow]")
+                cols=Prompt.ask("[bold cyan]Enter column names to normalize[/bold cyan]").lower()
+                if cols=="-1":
+                    return self.data
+                for col in cols.split(" "):
                     try:
-                        minValue = self.data[column].min()
-                        maxValue = self.data[column].max()
-                        self.data[column] = (self.data[column] - minValue)/(maxValue - minValue)
+                        mx=self.data[col].max()
+                        mn=self.data[col].min()
+                        self.data[col]=(self.data[col]-mn)/(mx-mn)
+                        console.print(f"[bold green]Column {col} normalized successfully[/bold green]")
                     except:
-                        print("\nNot possible....\U0001F636")
-                print("Done....\U0001F601")
-
-            # Performs normalization on whole dataset.
-            elif choice == 2:
+                        console.print(f"[bold red]Column {col} not found[/bold red]")
+                console.print("[bold green]Normalization of a column completed successfully ✔[/bold green]")
+            elif ch == 2:
                 try:
                     self.data = pd.DataFrame(MinMaxScaler().fit_transform(self.data))
-                    print("Done.......\U0001F601")
-
+                    console.print("[bold green]Normalization on whole dataset completed successfully ✔[/bold green]")
                 except:
-                    print("\nString Columns are present. So, " + self.bold_start + "NOT" + self.bold_end + " possible.\U0001F636\nYou can try the first option though.")
-                
-            elif choice==3:
-                DataDescription.showDataset(self)
-
+                    console.print("[bold red]String Columns are present. So, NOT possible.[/bold red]")
+            elif ch == 3:
+                DataDescription(self.data).show_dataset()
             else:
-                print("\nYou pressed the wrong key!! Try again..\U0001F974")
+                console.print("[bold red]Invalid choice[/bold red]")
+        return self.data
 
-        return
-
-    # Function to perform standardization on specific column(s) or on whole dataset.
     def standardization(self):
         while(1):
-            print("\nTasks (Standardization)\U0001F447")
-            for task in self.tasks_standardization:
-                print(task)
-
+            table=Table(title="Standardization Tasks",box=box.ROUNDED,border_style="cyan",title_style="bold cyan")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold red")
+            for key,value in self.tasks_standardization.items():
+                table.add_row(key,value)
+            console.print(table)
             while(1):
                 try:
-                    choice = int(input(("\n\nWhat you want to do? (Press -1 to go back)  ")))
+                    ch=Prompt.ask("[bold cyan]What you want to do? (Press -1 to go back)[/bold cyan]")
+                    ch = int(ch)
                 except ValueError:
-                    print("Integer Value required. Try again.....")
+                    console.print("[bold red]Invalid input. Please enter a valid integer😡[/bold red]")
                     continue
                 break
-
-            if choice == -1:
-                break
-            
-            # This is the basic approach to perform Standard Scaler on a set of data.
-            elif choice == 1:
-                print(self.data.dtypes)
-                columns = input("Enter all the column"+ self.bold_start + "(s)" + self.bold_end + "you want to normalize (Press -1 to go back)  ").lower()
-                if columns == "-1":
-                    break
-                for column in columns.split(" "):
+            if ch == -1:
+                return self.data
+            elif ch == 1:
+                console.print(f"[bold yellow]{self.data.dtypes}[/bold yellow]")
+                cols=Prompt.ask("[bold cyan]Enter column names to normalize[/bold cyan]").lower()
+                if cols=="-1":
+                    return self.data
+                for col in cols.split(" "):
                     try:
-                        mean = self.data[column].mean()
-                        standard_deviation = self.data[column].std()
-                        self.data[column] = (self.data[column] - mean)/(standard_deviation)
+                        mn=self.data[col].mean()
+                        sd=self.data[col].stf()
+                        self.data[col]=(self.data[col]-mn)/(sd)
+                        console.print(f"[bold green]Column {col} normalized successfully[/bold green]")
                     except:
-                        print("\nNot possible....\U0001F636")
-                print("Done....\U0001F601")
-                    
-            # Performing standard scaler on whole dataset.
-            elif choice == 2:
+                        console.print(f"[bold red]Column {col} not found[/bold red]")
+                console.print("[bold green]Normalization of a column completed successfully ✔[/bold green]")
+            elif ch == 2:
                 try:
                     self.data = pd.DataFrame(StandardScaler().fit_transform(self.data))
-                    print("Done.......\U0001F601")
+                    console.print("[bold green]Normalization on whole dataset completed successfully ✔[/bold green]")
                 except:
-                    print("\nString Columns are present. So, " + self.bold_start + "NOT" + self.bold_end + " possible.\U0001F636\nYou can try the first option though.")
-                break
-
-            elif choice==3:
-                DataDescription.showDataset(self)
-
+                    console.print("[bold red]String Columns are present. So, NOT possible.[/bold red]")
+            elif ch == 3:
+                DataDescription(self.data).show_dataset()
             else:
-                print("\nYou pressed the wrong key!! Try again..\U0001F974")
-
-        return
-
-    # main function of the FeatureScaling Class.
-    def scaling(self):
-        while(1):
-            print("\nTasks (Feature Scaling)\U0001F447")
-            for task in self.tasks:
-                print(task)
-            
-            while(1):
-                try:
-                    choice = int(input(("\n\nWhat you want to do? (Press -1 to go back)  ")))
-                except ValueError:
-                    print("Integer Value required. Try again.....\U0001F974")
-                    continue
-                break
-            if choice == -1:
-                break
-            
-            elif choice == 1:
-                self.normalization()
-
-            elif choice == 2:
-                self.standardization()
-
-            elif choice==3:
-                DataDescription.showDataset(self)
-            
-            else:
-                print("\nWrong Integer value!! Try again..\U0001F974")
-        # Returns all the changes on the DataFrame.
+                console.print("[bold red]Invalid choice[/bold red]")
         return self.data
+                
+    def scaler(self):
+        while(1):
+            table=Table(title="Feature Scaling Tasks",box=box.ROUNDED,border_style="cyan",title_style="bold cyan")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold red")
+            for key,value in self.tasks.items():
+                table.add_row(key,value)
+            console.print(table)
+            ch = Prompt.ask("[bold cyan]What you want to do? (Press -1 to go back)[/bold cyan]")
+            if ch == "-1":
+                return self.data
+            elif ch == "1":
+                self.normalization()
+            elif ch == "2":
+                self.standardization()
+            elif ch == "3":
+                DataDescription(self.data).show_dataset()
+            else:
+                console.print("[bold red]Invalid choice[/bold red]")
+        return self.data
+                
+        

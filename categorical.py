@@ -1,10 +1,8 @@
 import pandas as pd
-from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from data_description import DataDescription
 from rich.console import Console
 from rich.table import Table
 from rich.prompt import Prompt
-from rich.panel import Panel
 from rich import box
 console=Console()
 class Categorical:

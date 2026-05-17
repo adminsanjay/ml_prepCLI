@@ -84,7 +84,7 @@ class Preprocessor:
             self.data=Categorical(self.data).categorical()
             console.print("[bold green]Encoding completed ✔[/bold green]")
         elif choice=="4":
-            self.data=FeatureScaling(self.data).scaling()
+            self.data=FeatureScaling(self.data).scaler()
             console.print("[bold green]Scaling completed ✔[/bold green]")
         elif choice=="5":
             Download(self.data).download()
@@ -103,7 +103,6 @@ class Preprocessor:
             self.menu()
             choice=Prompt.ask("[bold cyan]Select Task[/bold cyan]")
             self.run_task(choice)
-
 @click.command()
 @click.argument("file")
 def start(file):
