@@ -1,175 +1,140 @@
 import pandas as pd
 from data_description import DataDescription
-
-
-class Imputation:
-    
-    bold_start = "\033[1m"
-    bold_end = "\033[0;0m"
-
-    # The Task associated with this class.
-    tasks = [
-        "\n1. Show number of Null Values",
-        "2. Remove Columns",
-        "3. Fill Null Values (with mean)",
-        "4. Fill Null Values (with median)",
-        "5. Fill Null Values (with mode)",
-        "6. Show the Dataset"
-    ]
-
-    def __init__(self, data):
-        self.data = data
-
-    # function to show columns of the DataFrame
+from rich.console import Console
+from rich.table import Table
+from rich.prompt import Prompt
+from rich.panel import Panel
+from rich import box
+class NullHandler:
+    tasks = {
+        "1":"Show NULL Values",
+        "2":"Remove Columns",
+        "3":"Fill NULL Values With Mean",
+        "4":"Fill NULL Values With Median",
+        "5":"Fill NULL Values With Mode",
+        "6":"Show Dataset",
+        "-1":"Back"
+    }
+    console=Console()
+    def __init__(self,data):
+        self.data=data
     def showColumns(self):
-        print("\nColumns\U0001F447\n")
-        for column in self.data.columns.values:
-            print(column, end = "  ")
-        return
-    
-    # function to print the number of NULL values present in each column
+        table=Table(title="Columns",box=box.ROUNDED,header_style="bold blue")
+        table.add_column("Column Names",style="bold green")
+        for col in self.data.columns.values:
+            table.add_row(col)
+        self.console.print(table)
     def printNullValues(self):
-        print("\nNULL values of each column:")
-        for column in self.data.columns.values:
-            # isnull checks on each value of a column that whether the value is null or not.
-            print('{0: <20}'.format(column) + '{0: <5}'.format(sum(pd.isnull(self.data[column]))))
+        self.console.print("\nNULL values of each column:")
+        for col in self.data.columns.values:
+            print('{0:<20}'.format(col)+'{0:5}'.format(sum(pd.isnull(self.data[col]))))
         print("")
         return
-
-    # function to remove a column from the DataFrame
     def removeColumn(self):
         self.showColumns()
         while(1):
-            columns = input("\nEnter all the column"+ self.bold_start + "(s)" + self.bold_end + "you want to delete (Press -1 to go back)  ").lower()
-
-            if columns == "-1":
+            col=Prompt.ask("Enter Column Names (space separated)").lower()
+            if col=="-1":
                 break
-
-            choice = input("Are you sure?(y/n) ")
-            if choice=="y" or choice=="Y":
+            ch=Prompt.ask("Are you sure?(y/n)")
+            if ch=="y" or ch=="Y":
                 try:
-                    # inplace = True otherwise, the changes won't reflect on the DataFrame.
-                    self.data.drop(columns.split(" "), axis = 1, inplace = True)
+                    self.data.drop(col.split(" "),axis=1,inplace=True)
                 except KeyError:
-                    print("One or more Columns are not present. Try again.....\U0001F974")
+                    self.console.print(Panel.fit("[bold red]Column Not Found ❌[/bold red]"))
                     continue
-                print("Done.......\U0001F601")
+                self.console.print(Panel.fit("[bold green]Null Values Removed ✔[/bold green]"))
                 break
             else:
-                print("Not Deleting........\U0001F974")
+                self.console.print(Panel.fit("[bold red]Not Deleting ❌[/bold red]"))
         return
-
-    # function that fills null values with the mean of that column.
     def fillNullWithMean(self):
         self.showColumns()
         while(1):
-            column = input("\nEnter the column name:(Press -1 to go back)  ").lower()
-            if column == "-1":
+            col=Prompt.ask("Enter Column Names (space separated)").lower()
+            if col=="-1":
                 break
-            choice = input("Are you sure? (y/n)  ")
-            if choice=="y" or choice=='Y':
+            ch=Prompt.ask("Are you sure?(y/n)")
+            if ch=="y" or ch=="Y":
                 try:
-                    self.data[column] = self.data[column].fillna(self.data[column].mean())
+                    self.data[col] = self.data[col].fillna(self.data[col].mean())
                 except KeyError:
-                    print("Column is not present. Try again.....\U0001F974")
+                    self.console.print(Panel.fit("[bold red]Column Not Found ❌[/bold red]"))
                     continue
                 except TypeError:
-                    # Imputation is only possible on some specific datatypes like int, float etc.
-                    print("The Imputation is not possible here\U0001F974. Try on another column.")
+                    self.console.print(Panel.fit("[bold red]Not possible to fill Null Values with Mean ❌[/bold red]"))
                     continue
-                print("Done......\U0001F601")
+                self.console.print(Panel.fit("[bold green]Null Values Filled with Mean ✔[/bold green]"))
                 break
             else:
-                print("Not changing........\U0001F974")
+                self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
         return
-
-
-    # function that fills null values with the median of that column.
     def fillNullWithMedian(self):
         self.showColumns()
         while(1):
-            column = input("\nEnter the column name:(Press -1 to go back)  ").lower()
-            if column == "-1":
+            col=Prompt.ask("Enter Column Names (space separated)").lower()
+            if col=="-1":
                 break
-            choice = input("Are you sure? (y/n)  ")
-            if choice=="y" or choice=='Y':
+            ch=Prompt.ask("Are you sure?(y/n)")
+            if ch=="y" or ch=="Y":
                 try:
-                    self.data[column] = self.data[column].fillna(self.data[column].median())
+                    self.data[col] = self.data[col].fillna(self.data[col].median())
                 except KeyError:
-                    print("Column is not present. Try again.....\U0001F974")
+                    self.console.print(Panel.fit("[bold red]Column Not Found ❌[/bold red]"))
                     continue
                 except TypeError:
-                    print("The Imputation is not possible here\U0001F974.Try on another column.")
+                    self.console.print(Panel.fit("[bold red]Not possible to fill Null Values with Median ❌[/bold red]"))
                     continue
-                print("Done......\U0001F601")
+                self.console.print(Panel.fit("[bold green]Null Values Filled with Median ✔[/bold green]"))
                 break
             else:
-                print("Not changing........\U0001F974")
+                self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
         return
-
-    # function that fills null values with the mean of that column.
-
-    # function that fills null values with the mode of that column.
     def fillNullWithMode(self):
         self.showColumns()
         while(1):
-            column = input("\nEnter the column name:(Press -1 to go back)  ").lower()
-            if column == "-1":
+            col=Prompt.ask("Enter Column Names (space separated)").lower()
+            if col=="-1":
                 break
-            choice = input("Are you sure? (y/n)  ")
-            if choice=="y" or choice=='Y':
+            ch=Prompt.ask("Are you sure?(y/n)")
+            if ch=="y" or ch=="Y":
                 try:
-                    # Mode provides us with dataframe so, we will take 1st value(most probable value).
-                    # Look into the documentation, if any doubts.
-                    self.data[column] = self.data[column].fillna(self.data[column].mode()[0])
+                    self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
                 except KeyError:
-                    print("Column is not present. Try again.....\U0001F974")
+                    self.console.print(Panel.fit("[bold red]Column Not Found ❌[/bold red]"))
                     continue
                 except TypeError:
-                    print("The Imputation is not possible here\U0001F974. Try on another column.")
+                    self.console.print(Panel.fit("[bold red]Not possible to fill Null Values with Mode ❌[/bold red]"))
                     continue
-                print("Done......\U0001F601")
+                self.console.print(Panel.fit("[bold green]Null Values Filled with Mode ✔[/bold green]"))
                 break
             else:
-                print("Not changing........\U0001F974")
+                self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
         return
 
-    # main function of the Imputation Class.
-    def imputer(self):
+    def null_handler(self):
         while(1):
-            print("\nImputation Tasks\U0001F447")
-            for task in self.tasks:
-                print(task)
-
-            while(1):
-                try:
-                    choice = int(input(("\nWhat you want to do? (Press -1 to go back)  ")))
-                except ValueError:
-                    print("Integer Value required. Try again.....\U0001F974")
-                    continue
-                break
-
-            if choice == -1:
-                break
-
-            elif choice==1:
+            table=Table(title="Data Description Tasks",box=box.DOUBLE_EDGE,border_style="blue")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold red")
+            for key,value in self.tasks.items():
+                table.add_row(key,value)
+            self.console.print(table)
+            choice=Prompt.ask("[bold cyan]Select Task[/bold cyan]")
+            if choice=="1":
                 self.printNullValues()
-
-            elif choice==2:
+            elif choice=="2":
                 self.removeColumn()
-
-            elif choice==3:
+            elif choice=="3":
                 self.fillNullWithMean()
-
-            elif choice==4:
+            elif choice=="4":
                 self.fillNullWithMedian()
-            
-            elif choice==5:
+            elif choice=="5":
                 self.fillNullWithMode()
-
-            elif choice==6:
-                DataDescription.showDataset(self)
-
+            elif choice=="6":
+                DataDescription.describe(self)
+            elif choice=="-1":
+                return
             else:
-                print("\nWrong Integer value!! Try again..\U0001F974")
+                self.console.print("[bold red]Invalid Choice[/bold red]")
         return self.data
