@@ -68,7 +68,7 @@ class DataDescription:
         while True:
             table=Table(title="Data Description Tasks",box=box.DOUBLE_EDGE,border_style="blue")
             table.add_column("Choice",style="bold yellow")
-            table.add_column("Task",style="bold green")
+            table.add_column("Task",style="bold red")
             for key,value in self.tasks.items():
                 table.add_row(key,value)
             console.print(table)
