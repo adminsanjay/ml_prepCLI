@@ -3,7 +3,6 @@ from rich.table import Table
 from rich.prompt import Prompt
 from rich.panel import Panel
 from rich import box
-import pandas as pd
 
 console=Console()
 

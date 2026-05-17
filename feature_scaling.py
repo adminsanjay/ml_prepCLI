@@ -3,8 +3,7 @@ from data_description import DataDescription
 from sklearn.preprocessing import MinMaxScaler, StandardScaler
 from rich.console import Console
 from rich.table import Table
-from rich.prompt import Prompt ,Confirm
-from rich.panel import Panel
+from rich.prompt import Prompt
 from rich import box
 console=Console()
 class FeatureScaling:
@@ -99,7 +98,7 @@ class FeatureScaling:
                 for col in cols.split(" "):
                     try:
                         mn=self.data[col].mean()
-                        sd=self.data[col].stf()
+                        sd=self.data[col].std()
                         self.data[col]=(self.data[col]-mn)/(sd)
                         console.print(f"[bold green]Column {col} normalized successfully[/bold green]")
                     except:

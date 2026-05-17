@@ -1,30 +1,22 @@
 import pandas as pd
-
+from rich.prompt import Prompt,Confirm
+from rich.panel import Panel
+from rich.console import Console
+console=Console()
 class Download:
-
-    bold_start = "\033[1m"
-    bold_end = "\033[0;0m"
-
-    def __init__(self, data):
-        self.data = data
-
-    # download the modified DataFrame as .csv file
+    def __init__(self,data):
+        self.data=data
     def download(self):
-        toBeDownload = {}
-        for column in self.data.columns.values:
-            toBeDownload[column] = self.data[column]
-
-        newFileName = input("\nEnter the " + self.bold_start +"FILENAME" + self.bold_end +" you want? (Press -1 to go back):  ")
-        if newFileName=="-1":
-            return
-        newFileName = newFileName + ".csv"
-        # index=False as this will not add an extra column of index.
-        pd.DataFrame(self.data).to_csv(newFileName, index = False)
-        
-        print("Hurray!! It is done....\U0001F601")
-        
-        if input("Do you want to exit now? (y/n) ").lower() == 'y':
-            print("Exiting...\U0001F44B")
-            exit()
-        else:
-            return
+        filename=Prompt.ask("[bold cyan]Enter Filename (-1 to back)[/bold cyan]")
+        if filename=="-1":
+            return self.data
+        if not filename.endswith(".csv"):
+            filename+=".csv"
+        try:
+            self.data.to_csv(filename,index=False)
+            console.print(Panel.fit(f"[bold green]{filename} Downloaded Successfully ✔[/bold green]",border_style="green"))
+        except Exception as e:
+            console.print(Panel.fit(f"[bold red]{e}[/bold red]",border_style="red"))
+        if Confirm.ask("Exit Application?"):
+            raise SystemExit
+        return self.data
