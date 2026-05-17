@@ -14,7 +14,7 @@ from rich.prompt import Prompt, Confirm
 from rich import box
 from data_description import DataDescription
 from data_input import DataInput
-from imputation import Imputation
+from null_val import NullHandler
 from download import Download
 from categorical import Categorical
 from feature_scaling import FeatureScaling
@@ -78,7 +78,7 @@ class Preprocessor:
         if choice=="1":
             DataDescription(self.data).describe()
         elif choice=="2":
-            self.data=Imputation(self.data).imputer()
+            self.data=NullHandler(self.data).null_handler()
             console.print("[bold green]NULL handling completed ✔[/bold green]")
         elif choice=="3":
             self.data=Categorical(self.data).categoricalMain()
