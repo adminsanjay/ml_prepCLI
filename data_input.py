@@ -1,46 +1,30 @@
 from os import path
-import sys
 import pandas as pd
-
+from rich.console import Console
+from rich.panel import Panel
+console=Console()
 
 class DataInput:
-
-    
-    bold_start = "\033[1m"
-    bold_end = "\033[0;0m"
-
-    
-    supported_file_extensions = [
-        '.csv',
-    ]
-
-
-    def change_to_lower_case(self, data):
-        for column in data.columns.values:
-            data.rename(columns = {column : column.lower()}, inplace = True)
+    supported_file_extensions=[".csv"]
+    def change_to_lower_case(self,data):
+        data.columns=[col.lower() for col in data.columns]
         return data
-
-
     def get_data(self,file):
+        filename,file_extension=path.splitext(file)
+        if file_extension=="":
+            console.print(Panel.fit("[bold red]Provide Dataset Name With Extension 🙃[/bold red]",border_style="red"))
+            raise SystemExit
+        if file_extension not in self.supported_file_extensions:
+            console.print(Panel.fit("[bold red]Unsupported File Extension 🙃[/bold red]",border_style="red"))
+            raise SystemExit
         try:
-            filename,file_extension=path.splitext(file)
-            if file_extension == "":
-                raise SystemExit(f"Provide the " + self.bold_start + "DATASET" + self.bold_end +" name (with extension).\U0001F643")
-
-            if file_extension not in self.supported_file_extensions:
-                raise SystemExit(f"This file extension is not " + self.bold_start + "supported.\U0001F643" + self.bold_end)
-        
-        except IndexError:
-            raise SystemExit(f"Provide the " + self.bold_start + "DATASET" + self.bold_end +" name (with extension).\U0001F643")
-        
-        try:
-            data = pd.read_csv(filename+file_extension)
+            data=pd.read_csv(filename+file_extension)
+            console.print(Panel.fit("[bold yellow]Dataset File Is Ready ✔[/bold yellow]",border_style="yellow"))
         except pd.errors.EmptyDataError:
-            raise SystemExit(f"The file is "+ self.bold_start + "EMPTY" + self.bold_end + "\U0001F635")
-
+            console.print(Panel.fit("[bold red]Dataset File Is Empty 😵[/bold red]",border_style="red"))
+            raise SystemExit
         except FileNotFoundError:
-            raise SystemExit(f"File " + self.bold_start + "doesn't" + self.bold_end + " exist\U0001F635")
-
-        data = self.change_to_lower_case(data)
-
+            console.print(Panel.fit("[bold red]File Doesn't Exist 😵[/bold red]",border_style="red"))
+            raise SystemExit
+        data=self.change_to_lower_case(data)
         return data
