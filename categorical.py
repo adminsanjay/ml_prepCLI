@@ -22,12 +22,13 @@ class Categorical:
         for column in self.data.select_dtypes(include="object"):
             table.add_row(column,str(self.data[column].nunique()))
         console.print(table)
+        return self.data
     def encoding(self):
         cat_cols=self.data.select_dtypes(include="object")
         while(1):
             col=Prompt.ask("[bold cyan]Enter column name to encode[/bold cyan]")
             if col=="-1":
-                break
+                return self.data
             if col in cat_cols.columns:
                 self.data=pd.get_dummies(data=self.data,columns=[col])
                 console.print("[bold green]Encoding done[/bold green]")
@@ -38,35 +39,25 @@ class Categorical:
                     self.categoricalColumn()
                     break
             else:
-                console.print("[bold red]Column not found[/bold red]")        
+                console.print("[bold red]Column not found[/bold red]")
+        return self.data      
     def categorical(self):
         while(1):
-            print("\nTasks\U0001F447")
-            for task in self.tasks:
-                print(task)
-
-            while(1):
-                try:
-                    choice = int(input(("\n\nWhat you want to do? (Press -1 to go back)  ")))
-                except ValueError:
-                    print("Integer Value required. Try again...\U0001F974")
-                    continue
-                break
-
-            if choice == -1:
-                break
-            
-            elif choice == 1:
+            table=Table(title="Categorical Encoding Tasks",box=box.DOUBLE_EDGE,border_style="blue")
+            table.add_column("Choice",style="bold yellow")
+            table.add_column("Task",style="bold red")
+            for key,value in self.tasks.items():
+                table.add_row(key,value)
+            console.print(table)
+            choice=Prompt.ask("[bold cyan]Select Task[/bold cyan]")
+            if choice=="1":
                 self.categoricalColumn()
-
-            elif choice == 2:
-                self.categoricalColumn()
+            elif choice=="2":
                 self.encoding()
-
-            elif choice == 3:
-                DataDescription.show_dataset(self)
-
+            elif choice=="3":
+                DataDescription(self.data).show_dataset()
+            elif choice=="-1":
+                return self.data
             else:
-                print("\nWrong Integer value!! Try again..\U0001F974")
-        # return the data after modifying
+                console.print("[bold red]Invalid Choice[/bold red]") 
         return self.data

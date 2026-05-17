@@ -31,13 +31,13 @@ class NullHandler:
         for col in self.data.columns:
             table.add_row(col,str(self.data[col].isnull().sum()))
         self.console.print(table)
-        return
+        return self.data
     def removeColumn(self):
         self.showColumns()
         while(1):
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
-                break
+                return self.data
             if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data.drop(col.split(" "),axis=1,inplace=True)
@@ -48,13 +48,13 @@ class NullHandler:
                 break
             else:
                 self.console.print(Panel.fit("[bold red]Not Deleting ❌[/bold red]"))
-        return
+        return self.data
     def fillNullWithMean(self):
         self.showColumns()
         while(1):
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
-                break
+                return self.data
             if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].mean())
@@ -68,13 +68,13 @@ class NullHandler:
                 break
             else:
                 self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
-        return
+        return self.data
     def fillNullWithMedian(self):
         self.showColumns()
         while(1):
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
-                break
+                return self.data
             if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].median())
@@ -88,13 +88,13 @@ class NullHandler:
                 break
             else:
                 self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
-        return
+        return self.data
     def fillNullWithMode(self):
         self.showColumns()
         while(1):
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
-                break
+                return self.data
             if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
@@ -108,11 +108,11 @@ class NullHandler:
                 break
             else:
                 self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
-        return
+        return self.data
 
     def null_handler(self):
         while(1):
-            table=Table(title="Data Description Tasks",box=box.DOUBLE_EDGE,border_style="blue")
+            table=Table(title="Null Value Handling Tasks",box=box.DOUBLE_EDGE,border_style="blue")
             table.add_column("Choice",style="bold yellow")
             table.add_column("Task",style="bold red")
             for key,value in self.tasks.items():
@@ -130,9 +130,9 @@ class NullHandler:
             elif choice=="5":
                 self.fillNullWithMode()
             elif choice=="6":
-                DataDescription.describe(self)
+                DataDescription(self.data).show_dataset()
             elif choice=="-1":
-                return
+                return self.data
             else:
                 self.console.print("[bold red]Invalid Choice[/bold red]")
         return self.data

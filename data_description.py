@@ -30,7 +30,7 @@ class DataDescription:
             try:
                 rows=int(Prompt.ask("[bold cyan]Number of rows to display (-1 to go back)[/bold cyan]"))
                 if rows==-1:
-                    return
+                    return self.data
                 if rows<=0:
                     console.print("[bold red]Invalid Choice[/bold red]")
                     continue
@@ -82,6 +82,7 @@ class DataDescription:
             elif choice=="3":
                 self.show_dataset()
             elif choice=="-1":
-                return
+                return self.data
             else:
                 console.print("[bold red]Invalid Choice[/bold red]")
+        return self.data
