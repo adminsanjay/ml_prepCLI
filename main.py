@@ -38,8 +38,8 @@ class Preprocessor:
 
     def show_columns(self):
         table=Table(title="Dataset Columns",box=box.ROUNDED,border_style="cyan")
-        table.add_column("Index",style="bold yellow")
-        table.add_column("Column Name",style="bold green")
+        table.add_column("Index",style="bold red")
+        table.add_column("Column Name",style="bold yellow")
         for idx,col in enumerate(self.data.columns):
             table.add_row(str(idx+1),col)
         console.print(table)
