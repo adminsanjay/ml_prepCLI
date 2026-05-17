@@ -1,47 +1,45 @@
 import pandas as pd
 from sklearn.preprocessing import LabelEncoder, OneHotEncoder
 from data_description import DataDescription
-
+from rich.console import Console
+from rich.table import Table
+from rich.prompt import Prompt
+from rich.panel import Panel
+from rich import box
+console=Console()
 class Categorical:
-    # The Task associated with this class.
-    tasks = [
-        '\n1. Show Categorical Columns',
-        '2. Performing One Hot encoding',
-        '3. Show the Dataset'
-    ]
+    tasks = {
+        '1' : "Show Categorical Columns",
+        '2' : "Performing One Hot encoding",
+        '3' : "Show the Dataset"
+    }
     def __init__(self, data):
         self.data = data
-
-    # function to show all the categorical columns and number of unique values in them.
     def categoricalColumn(self):
-        print('\n{0: <20}'.format("Categorical Column") + '{0: <5}'.format("Unique Values"))
-        # select_dtypes selects the columns with object datatype(which could be further categorize)
+        table=Table(title="Unique columns in the dataset",box=box.ROUNDED,border_style="red")
+        table.add_column("Categorical Column",style="bold cyan")
+        table.add_column("Unique Values",style="bold yellow")
         for column in self.data.select_dtypes(include="object"):
-            print('{0: <20}'.format(column) + '{0: <5}'.format(self.data[column].nunique()))
-
-    # function to encode any particular column
+            table.add_row(column,str(self.data[column].nunique()))
+        console.print(table)
     def encoding(self):
-        categorical_columns = self.data.select_dtypes(include="object")
+        cat_cols=self.data.select_dtypes(include="object")
         while(1):
-            column = input("\nWhich column would you like to one hot encode?(Press -1 to go back)  ").lower()
-            if column == "-1":
+            col=Prompt.ask("[bold cyan]Enter column name to encode[/bold cyan]")
+            if col=="-1":
                 break
-            # The encoding function is only for categorical columns.
-            if column in categorical_columns:
-                self.data = pd.get_dummies(data=self.data, columns = [column])
-                print("Encoding is done.......\U0001F601")
-                
-                choice = input("Are there more columns to be encoded?(y/n)  ")
-                if choice == "y" or choice == "Y":
+            if col in cat_cols.columns:
+                self.data=pd.get_dummies(data=self.data,columns=[col])
+                console.print("[bold green]Encoding done[/bold green]")
+                choice=Prompt.ask("[bold cyan]More columns to encode?(y/n)[/bold cyan]").lower()
+                if choice=="y":
                     continue
                 else:
                     self.categoricalColumn()
                     break
             else:
-                print("Wrong Column Name. Try Again...\U0001F974")
-
-    # The main function of the Categorical class.
-    def categoricalMain(self):
+                console.print("[bold red]Column not found[/bold red]")        
+    def categorical(self):
         while(1):
             print("\nTasks\U0001F447")
             for task in self.tasks:
@@ -66,7 +64,7 @@ class Categorical:
                 self.encoding()
 
             elif choice == 3:
-                DataDescription.showDataset(self)
+                DataDescription.show_dataset(self)
 
             else:
                 print("\nWrong Integer value!! Try again..\U0001F974")

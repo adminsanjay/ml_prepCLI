@@ -2,7 +2,7 @@ import pandas as pd
 from data_description import DataDescription
 from rich.console import Console
 from rich.table import Table
-from rich.prompt import Prompt
+from rich.prompt import Prompt ,Confirm
 from rich.panel import Panel
 from rich import box
 class NullHandler:
@@ -38,8 +38,7 @@ class NullHandler:
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
                 break
-            ch=Prompt.ask("Are you sure?(y/n)")
-            if ch=="y" or ch=="Y":
+            if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data.drop(col.split(" "),axis=1,inplace=True)
                 except KeyError:
@@ -56,8 +55,7 @@ class NullHandler:
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
                 break
-            ch=Prompt.ask("Are you sure?(y/n)")
-            if ch=="y" or ch=="Y":
+            if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].mean())
                 except KeyError:
@@ -77,8 +75,7 @@ class NullHandler:
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
                 break
-            ch=Prompt.ask("Are you sure?(y/n)")
-            if ch=="y" or ch=="Y":
+            if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].median())
                 except KeyError:
@@ -98,8 +95,7 @@ class NullHandler:
             col=Prompt.ask("Enter Column Names (space separated)").lower()
             if col=="-1":
                 break
-            ch=Prompt.ask("Are you sure?(y/n)")
-            if ch=="y" or ch=="Y":
+            if Confirm.ask(f"Remove '{col}'?"):
                 try:
                     self.data[col] = self.data[col].fillna(self.data[col].mode()[0])
                 except KeyError:

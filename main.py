@@ -81,7 +81,7 @@ class Preprocessor:
             self.data=NullHandler(self.data).null_handler()
             console.print("[bold green]NULL handling completed ✔[/bold green]")
         elif choice=="3":
-            self.data=Categorical(self.data).categoricalMain()
+            self.data=Categorical(self.data).categorical()
             console.print("[bold green]Encoding completed ✔[/bold green]")
         elif choice=="4":
             self.data=FeatureScaling(self.data).scaling()
