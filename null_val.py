@@ -18,12 +18,14 @@ class NullHandler:
     console=Console()
     def __init__(self,data):
         self.data=data
+    
     def showColumns(self):
         table=Table(title="Columns",box=box.ROUNDED,header_style="bold blue")
         table.add_column("Column Names",style="bold green")
         for col in self.data.columns.values:
             table.add_row(col)
         self.console.print(table)
+    
     def printNullValues(self):
         table=Table(title="NULL Values",box=box.ROUNDED,border_style="red")
         table.add_column("Column",style="bold cyan")
@@ -32,6 +34,7 @@ class NullHandler:
             table.add_row(col,str(self.data[col].isnull().sum()))
         self.console.print(table)
         return self.data
+    
     def removeColumn(self):
         self.showColumns()
         while(1):
@@ -49,6 +52,7 @@ class NullHandler:
             else:
                 self.console.print(Panel.fit("[bold red]Not Deleting ❌[/bold red]"))
         return self.data
+    
     def fillNullWithMean(self):
         self.showColumns()
         while(1):
@@ -69,6 +73,7 @@ class NullHandler:
             else:
                 self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
         return self.data
+    
     def fillNullWithMedian(self):
         self.showColumns()
         while(1):
@@ -89,6 +94,7 @@ class NullHandler:
             else:
                 self.console.print(Panel.fit("[bold red]Not Changing ❌[/bold red]"))
         return self.data
+    
     def fillNullWithMode(self):
         self.showColumns()
         while(1):

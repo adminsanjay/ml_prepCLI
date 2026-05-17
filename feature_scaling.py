@@ -12,19 +12,16 @@ class FeatureScaling:
         '2':"Perform Standardization(Standard Scaler)",
         '3':"Show the Dataset"
     }
-    
     tasks_normalization = {
         '1':"Normalize a specific Column",
         '2':"Normalize the whole Dataset",
         '3':"Show the Dataset"
     }
-
     tasks_standardization = {
         '1':"Standardize a specific Column",
         '2':"Standardize the whole Dataset",
         '3':"Show the Dataset"
     }
-
     def __init__(self, data):
         self.data = data
     
@@ -136,5 +133,3 @@ class FeatureScaling:
             else:
                 console.print("[bold red]Invalid choice[/bold red]")
         return self.data
-                
-        

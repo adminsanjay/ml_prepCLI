@@ -1,5 +1,4 @@
 pandas
 scikit_learn
-termcolor
 rich
 click

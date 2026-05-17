@@ -3,9 +3,7 @@ from rich.table import Table
 from rich.prompt import Prompt
 from rich.panel import Panel
 from rich import box
-
 console=Console()
-
 class DataDescription:
     tasks={
         "1":"Describe Specific Column",
@@ -13,7 +11,6 @@ class DataDescription:
         "3":"Show Dataset",
         "-1":"Back"
     }
-
     def __init__(self,data):
         self.data=data
 
@@ -71,9 +68,7 @@ class DataDescription:
             for key,value in self.tasks.items():
                 table.add_row(key,value)
             console.print(table)
-
             choice=Prompt.ask("[bold cyan]Select Task[/bold cyan]")
-
             if choice=="1":
                 self.describe_column()
             elif choice=="2":

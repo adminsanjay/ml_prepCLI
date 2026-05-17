@@ -13,6 +13,7 @@ class Categorical:
     }
     def __init__(self, data):
         self.data = data
+    
     def categoricalColumn(self):
         table=Table(title="Unique columns in the dataset",box=box.ROUNDED,border_style="red")
         table.add_column("Categorical Column",style="bold cyan")
@@ -21,6 +22,7 @@ class Categorical:
             table.add_row(column,str(self.data[column].nunique()))
         console.print(table)
         return self.data
+    
     def encoding(self):
         cat_cols=self.data.select_dtypes(include="object")
         while(1):
@@ -39,6 +41,7 @@ class Categorical:
             else:
                 console.print("[bold red]Column not found[/bold red]")
         return self.data      
+    
     def categorical(self):
         while(1):
             table=Table(title="Categorical Encoding Tasks",box=box.DOUBLE_EDGE,border_style="blue")

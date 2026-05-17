@@ -3,12 +3,12 @@ import pandas as pd
 from rich.console import Console
 from rich.panel import Panel
 console=Console()
-
 class DataInput:
     supported_file_extensions=[".csv"]
     def change_to_lower_case(self,data):
         data.columns=[col.lower() for col in data.columns]
         return data
+   
     def get_data(self,file):
         filename,file_extension=path.splitext(file)
         if file_extension=="":
