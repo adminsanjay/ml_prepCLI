@@ -11,6 +11,7 @@ This project helps perform common preprocessing tasks directly from the terminal
 * Dataset Loading
 * Data Description
 * NULL Value Handling
+* One Hot Encoding
 * Feature Scaling
 * Dataset Preview
 * Dataset Download
